@@ -1,0 +1,161 @@
+import java.util.Scanner;
+import java.util.ArrayList;
+
+class Account {
+    private String accountHolderName;
+    private String accountNumber;
+    private double balance;
+    private ArrayList<String> transactionHistory;
+
+    // Constructor to initialize account with account holder name and number
+    public Account(String accountHolderName, String accountNumber) {
+        this.accountHolderName = accountHolderName;
+        this.accountNumber = accountNumber;
+        this.balance = 0.0; // Initial balance is 0
+        this.transactionHistory = new ArrayList<>();
+    }
+
+    // Method to deposit money into the account
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            transactionHistory.add("Deposited: $" + amount);
+        } else {
+            System.out.println("Deposit amount must be positive.");
+        }
+    }
+
+    // Method to withdraw money from the account
+    public void withdraw(double amount) {
+        if (amount > 0 && amount <= balance) {
+            balance -= amount;
+            transactionHistory.add("Withdrew: $" + amount);
+        } else if (amount <= 0) {
+            System.out.println("Withdrawal amount must be positive.");
+        } else {
+            System.out.println("Insufficient balance.");
+        }
+    }
+
+    // Method to check balance
+    public double getBalance() {
+        return balance;
+    }
+
+    // Method to show transaction history
+    public void showTransactionHistory() {
+        System.out.println("Transaction History:");
+        for (String transaction : transactionHistory) {
+            System.out.println(transaction);
+        }
+    }
+
+    // Getter for account number
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+}
+
+public class BankingSystem {
+    private static Scanner scanner = new Scanner(System.in);
+    private static ArrayList<Account> accounts = new ArrayList<>();
+
+    // Method to create a new account
+    public static void createAccount() {
+        System.out.print("Enter account holder's name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter account number: ");
+        String accountNumber = scanner.nextLine();
+
+        // Create a new account and add to the list
+        Account account = new Account(name, accountNumber);
+        accounts.add(account);
+        System.out.println("Account created successfully!");
+    }
+
+    // Method to find an account by account number
+    public static Account findAccount(String accountNumber) {
+        for (Account account : accounts) {
+            if (account.getAccountNumber().equals(accountNumber)) {
+                return account;
+            }
+        }
+        return null;
+    }
+
+    // Method to handle user menu and actions
+    public static void showMenu() {
+        while (true) {
+            System.out.println("\n--- Banking System Menu ---");
+            System.out.println("1. Create Account");
+            System.out.println("2. Deposit Money");
+            System.out.println("3. Withdraw Money");
+            System.out.println("4. Check Balance");
+            System.out.println("5. Show Transaction History");
+            System.out.println("6. Exit");
+            System.out.print("Choose an option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();  // Consume newline left-over
+
+            switch (choice) {
+                case 1:
+                    createAccount();
+                    break;
+                case 2:
+                    System.out.print("Enter account number: ");
+                    String accountNumber = scanner.nextLine();
+                    Account depositAccount = findAccount(accountNumber);
+                    if (depositAccount != null) {
+                        System.out.print("Enter amount to deposit: ");
+                        double depositAmount = scanner.nextDouble();
+                        depositAccount.deposit(depositAmount);
+                    } else {
+                        System.out.println("Account not found!");
+                    }
+                    break;
+                case 3:
+                    System.out.print("Enter account number: ");
+                    accountNumber = scanner.nextLine();
+                    Account withdrawAccount = findAccount(accountNumber);
+                    if (withdrawAccount != null) {
+                        System.out.print("Enter amount to withdraw: ");
+                        double withdrawAmount = scanner.nextDouble();
+                        withdrawAccount.withdraw(withdrawAmount);
+                    } else {
+                        System.out.println("Account not found!");
+                    }
+                    break;
+                case 4:
+                    System.out.print("Enter account number: ");
+                    accountNumber = scanner.nextLine();
+                    Account checkBalanceAccount = findAccount(accountNumber);
+                    if (checkBalanceAccount != null) {
+                        System.out.println("Balance: $" + checkBalanceAccount.getBalance());
+                    } else {
+                        System.out.println("Account not found!");
+                    }
+                    break;
+                case 5:
+                    System.out.print("Enter account number: ");
+                    accountNumber = scanner.nextLine();
+                    Account transactionHistoryAccount = findAccount(accountNumber);
+                    if (transactionHistoryAccount != null) {
+                        transactionHistoryAccount.showTransactionHistory();
+                    } else {
+                        System.out.println("Account not found!");
+                    }
+                    break;
+                case 6:
+                    System.out.println("Thank you for using the banking system!");
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        showMenu();  // Start the banking system
+    }
+}
